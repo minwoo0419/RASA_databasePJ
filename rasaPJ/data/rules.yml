@@ -1,0 +1,19 @@
+version: "3.1"
+
+rules:
+  - rule: Say goodbye anytime the user says goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+  - rule: show routines
+    steps:
+      - intent: ask_show_routine
+      - action: action_show_routines
+  - rule: deny routines
+    steps:
+      - intent: deny_routine
+      - action: action_deny_routine
+  - rule: show kcal
+    steps:
+      - intent: ask_show_kcal
+      - action: action_show_kcal

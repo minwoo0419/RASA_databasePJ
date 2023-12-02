@@ -1,0 +1,142 @@
+version: "3.1"
+
+stories:
+  - story: Greet and receive User info signup and ask routine and
+    steps:
+      - intent: greet
+      - action: action_name
+      - intent: name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: height_weight
+        entities:
+          - height: 180cm
+          - weight: 70kg
+      - action: action_info
+      - intent: ask_routine
+      - action: action_recommand_routine
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help
+
+  - story: GreetName and receive User info signup and ask routine
+    steps:
+      - intent: greet_name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: height_weight
+        entities:
+          - height: 180cm
+          - weight: 70kg
+      - action: action_info
+      - intent: ask_routine
+      - action: action_recommand_routine
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help
+
+  - story: Greet and receive User info signin and ask routine
+    steps:
+      - intent: greet
+      - action: action_name
+      - intent: name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: ask_routine
+      - action: action_recommand_routine
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help
+
+  - story: GreetName and receive User info signin and ask routine
+    steps:
+      - intent: greet_name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: ask_routine
+      - action: action_recommand_routine
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help
+
+  - story: Greet and receive User info signup and ask diet
+    steps:
+      - intent: greet
+      - action: action_name
+      - intent: name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: height_weight
+        entities:
+          - height: 180cm
+          - weight: 70kg
+      - action: action_info
+      - intent: ask_diet
+      - action: utter_ask_kcal
+      - intent: input_kcal
+        entities:
+          - calorie: 1000kcal
+      - action: action_recommand_diet
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help
+
+  - story: GreetName and receive User info signup and ask diet
+    steps:
+      - intent: greet_name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: height_weight
+        entities:
+          - height: 180cm
+          - weight: 70kg
+      - action: action_info
+      - intent: ask_diet
+      - action: utter_ask_kcal
+      - intent: input_kcal
+        entities:
+          - calorie: 1000kcal
+      - action: action_recommand_diet
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help
+
+  - story: Greet and receive User info signin and ask diet
+    steps:
+      - intent: greet
+      - action: action_name
+      - intent: name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: ask_diet
+      - action: utter_ask_kcal
+      - intent: input_kcal
+        entities:
+          - calorie: 1000kcal
+      - action: action_recommand_diet
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help
+
+  - story: GreetName and receive User info signin and ask diet
+    steps:
+      - intent: greet_name
+        entities:
+          - name: minwoo
+      - action: action_greet
+      - intent: ask_diet
+      - action: utter_ask_kcal
+      - intent: input_kcal
+        entities:
+          - calorie: 1000kcal
+      - action: action_recommand_diet
+      - intent: good
+      - action: utter_good
+      - action: utter_ask_help

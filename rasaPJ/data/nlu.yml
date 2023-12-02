@@ -1,0 +1,161 @@
+version: "3.1"
+
+nlu:
+  - intent: greet
+    examples: |
+      - Hi
+      - Hello
+      - Hey
+      - Hi there
+      - Hello there
+      - Hey there
+      - Hiya
+  - intent: greet_name
+    examples: |
+      - Hi, I'm [minwoo](name)
+      - Hello, I'm [susin](name)
+      - Hey, I'm [woo](name)
+      - Hi there, I'm [su](name)
+      - Hello there, I'm [min](name)
+      - Hiya, I'm [jee](name)
+      - Hey, I'm [chulsu](name)
+      - Hi there, I'm [miyeong](name)
+      - Hello there, I'm [suzan](name)
+      - Hey there, I'm [minsu](name)
+      - Hiya, I'm [jaewon](name)
+      - Hello, my name is [gildong](name)
+  - intent: name
+    examples: |
+      - I'm [su](name)
+      - I'm [min](name)
+      - I'm [jee](name)
+      - I'm [chulsu](name)
+      - I'm [miyeong](name)
+      - I'm [suzan](name)
+      - I'm [minsu](name)
+      - I'm [jaewon](name)
+      - I'm [changseop yun](name)
+      - my name is [gildong hong](name)
+      - my name is [susin](name)
+      - my name is [minwoo](name)
+      - my name is [woo](name)
+      - my name is [su](name)
+      - my name is [min](name)
+
+  - intent: height_weight
+    examples: |
+      - My height is [168cm](height) and weight is [50kg](weight)
+      - Update my height to [190cm](height) and weight to [100kg](weight)
+      - [180.3cm](height) and [100kg](weight)
+      - height [180.32cm](height) and weight [100.33kg](weight)
+      - height: [170.2cm](height), weight: [50.3kg](weight)
+      - [189.33cm](height), [100.33kg](weight)
+      - [180.3cm](height), [100.3kg](weight)
+      - [180cm](height) and [100kg](weight)
+      - height is [180.3cm](height) and weight is [100.3kg](weight)
+      - height: [170.cm](height), weight: [100.3kg](weight)
+      - height: [175cm](height), weight: [60kg](weight)
+      - height: [160cm](height), weight: [40kg](weight)
+      - height: [171cm](height), weight: [57.3kg](weight)
+  - intent: ask_routine
+    examples: |
+      - Recommend a workout routine
+      - Please recommend a workout routine
+      - Tell me a routine
+      - What's my workout plan?
+      - What's my workout routine?
+      - What's my workout schedule?
+  - intent: ask_show_routine
+    examples: |
+      - Show me a workout routines I did
+      - Show me a exercise plans I did
+      - Show me a workout schedules I did
+      - Tell me the exercise routines I did
+      - Tell me the workout plans I did
+      - Tell me the exercise schedules I did
+  - intent: ask_diet
+    examples: |
+      - Recommend a diet plan
+      - Please recommend a diet plan
+      - Tell me a diet plan
+      - What's my diet plan?
+      - What's my diet schedule?
+      - What should I eat?
+      - What's my diet plan?
+      - What's my diet schedule?
+      - What's my diet plan for today?
+      - What's my diet schedule for today?
+
+  - intent: deny_routine
+    examples: |
+      - I don't want a workout plan
+      - I don't want a workout schedule
+      - I don't want a workout routine
+      - Try a different workout routine
+      - Try a different workout plan
+      - Try again with a different workout plan
+      - Sorry, I don't want a workout routine
+      - Sorry, I don't want a workout plan
+
+  - intent: good
+    examples: |
+      - Good
+      - Good job
+      - I love it
+      - I like it
+      - Thank you
+      - Thanks
+      - Thank you so much
+      - Thanks so much
+      - Thanks a lot
+  - intent: ask_show_kcal
+    examples: |
+      - Show me a calorie intake I did
+      - Tell me the calorie intake I did
+      - Please show me a calorie intake I did
+      - Please tell me the calorie intake I did
+      - Show me a calorie intake
+      - Tell me the calorie intake
+      - Please show me a calorie intake
+      - Please tell me the calorie intake
+
+  - intent: input_kcal
+    examples: |
+      - Add [100kcal](calorie) to my calorie intake
+      - Add [1000kcal](calorie) to my calorie intake
+      - Add [50kcal](calorie) to my calorie intake
+      - Add [100.3kcal](calorie) to my calorie intake
+      - Add [50.3kcal](calorie) to my calorie intake
+      - Add [70.33kcal](calorie) to my calorie intake
+      - [100.33kcal](calorie)
+      - [1000kcal](calorie)
+      - [100kcal](calorie)
+      - [50kcal](calorie)
+      - [100.3kcal](calorie)
+      - [50.3kcal](calorie)
+      - Update my calorie intake to [100.3kcal](calorie)
+      - Update my calorie intake to [50.3kcal](calorie)
+      - Update my calorie intake to [70.33kcal](calorie)
+      - My calorie intake is [1000kcal](calorie)
+      - My calorie intake is [100kcal](calorie)
+      - My calorie intake is [100.3kcal](calorie)
+      - My calorie intake is [50.3kcal](calorie)
+      - [100.3kcal](calorie)
+      - [30.2kcal](calorie)
+      - I ate [664.3kcal](calorie)
+      - I ate [1000kcal](calorie)
+      - I ate [100kcal](calorie)
+      - I ate [50kcal](calorie)
+      - I ate [100.3kcal](calorie)
+      - I ate [50.3kcal](calorie)
+      - I ate [70.33kcal](calorie)
+
+  - intent: goodbye
+    examples: |
+      - Bye
+      - Goodbye
+      - Bye bot
+      - Bye bye
+      - See you
+      - See you later
+      - See you soon
