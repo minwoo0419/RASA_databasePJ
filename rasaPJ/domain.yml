@@ -22,7 +22,7 @@ responses:
     - text: "Do you need more help?"
     - text: "Do you need more help? If so, please tell me."
   utter_good:
-    - text: "Good!"
+    - text: "Good! If you have any other help, please let me know."
   utter_ask_kcal:
     - text: "Did you eat something today? If so, please tell me how many calories you ate."
 actions:
