@@ -4,7 +4,7 @@ rules:
   - rule: Say goodbye anytime the user says goodbye
     steps:
       - intent: goodbye
-      - action: utter_goodbye
+      - action: action_goodbye
   - rule: show routines
     steps:
       - intent: ask_show_routine
@@ -17,3 +17,20 @@ rules:
     steps:
       - intent: ask_show_kcal
       - action: action_show_kcal
+  - rule: update routine
+    steps:
+      - intent: update_routine
+        entities:
+          - date: 2021-06-01
+      - action: action_update_routine
+  - rule: update height weight
+    steps:
+      - intent: update_height_weight
+        entities:
+          - height: 180cm
+          - weight: 70kg
+      - action: action_update_height_weight
+  - rule: show user info
+    steps:
+      - intent: ask_user_info
+      - action: action_show_user_info

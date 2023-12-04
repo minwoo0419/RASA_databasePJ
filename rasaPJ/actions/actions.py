@@ -18,14 +18,17 @@ class ActionName(Action):
         return 'action_name'
     
     def run(self, dispatcher, tracker, domain):
-        global name
-        name = next(tracker.get_latest_entity_values("name"), None)
+        global name, height, weight, bmi
         if name is None:
             dispatcher.utter_message(f"Hello! Please Tell me your name.")
-            return []
         else:
-            return [SlotSet("name",name)]
-
+            if height is not None or weight is not None:
+                dispatcher.utter_message(f"Hi {name}! Your BMI is {bmi}. What kind of help do you need?")
+            else:
+                dispatcher.utter_message(f"Hello {name}! You are a new member of this service! Can you tell me your height, and weight?")
+        return []
+                
+                
 class ActionGreet(Action):
     def name(self):
         return 'action_greet'
@@ -85,14 +88,15 @@ class ActionInfo(Action):
             return []
         t_height = next(tracker.get_latest_entity_values("height"), None)
         t_weight = next(tracker.get_latest_entity_values("weight"), None)
-        if t_height is None and t_weight is None:
+        print(t_height, t_weight)
+        if t_height is None or t_weight is None:
+            dispatcher.utter_message("Try again.")
             return []
         height = self.preprocess_measurement(t_height)
         weight = self.preprocess_measurement(t_weight)
         connection = pymysql.connect(**db_config)
         try:
             with connection.cursor() as cursor:
-                # 데이터베이스에서 사용자 정보 가져오기
                 if height is not None and weight is not None:
                     update_sql = f"UPDATE `User` SET `height` = {height}, `weight` = {weight} WHERE `name` = '{name}'"
                     cursor.execute(update_sql)
@@ -117,6 +121,45 @@ class ActionInfo(Action):
                 ]
         finally:
             connection.close()
+class ActionUpdateInfo(Action):
+    def name(self):
+        return 'action_update_height_weight'
+    def preprocess_measurement(self, measurement_str):
+        # measurement_str이 문자열 또는 바이트류 객체인지 확인
+        if not isinstance(measurement_str, (str, bytes)):
+            return None
+        match = re.search(r'\d+(\.\d+)?', measurement_str)
+        if match:
+            return decimal.Decimal(match.group())
+        return None
+    def run(self, dispatcher, tracker, domain):
+        global name, height, weight, bmi
+        if name is None:
+            dispatcher.utter_message("Please tell me your name")
+            return []
+        t_height = next(tracker.get_latest_entity_values("height"), None)
+        t_weight = next(tracker.get_latest_entity_values("weight"), None)
+        print(t_height, t_weight)
+        if t_height is None or t_weight is None:
+            dispatcher.utter_message("Try again.")
+            return []
+        height = self.preprocess_measurement(t_height)
+        weight = self.preprocess_measurement(t_weight)
+        connection = pymysql.connect(**db_config)
+        try:
+            dispatcher.utter_message(f"Okay {name}. I'll update your height, weight.")
+            with connection.cursor() as cursor:
+                # 데이터베이스에서 사용자 정보 가져오기
+                update_sql = f"UPDATE `User` SET `height` = {height}, `weight` = {weight} WHERE `name` = '{name}'"
+                cursor.execute(update_sql)
+                connection.commit()
+                bmi = weight / (height / 100) ** 2
+                bmi = bmi.quantize(decimal.Decimal('0.00'))
+                dispatcher.utter_message(f"Your height({height}cm) and weight({weight}kg) are updated! Now your bmi is {bmi}.")
+                return []
+        finally:
+            connection.close()
+        
 
 class ActionRoutine(Action):
     def name(self):
@@ -130,7 +173,8 @@ class ActionRoutine(Action):
         try:
             with connection.cursor() as cursor:
                 # 데이터베이스에서 사용자 정보 가져오기
-                sql = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY `id` DESC LIMIT 1"
+                today_date = datetime.today().date()
+                sql = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY `date` DESC LIMIT 1"
                 cursor.execute(sql)
                 result = cursor.fetchone()
                 if result:
@@ -140,6 +184,9 @@ class ActionRoutine(Action):
                     temp_date = result[date_index]
                     dispatcher.utter_message(f"You most recently did a {temp_type} routine at {temp_date}")
                     temp_date = temp_date + timedelta(days=1)
+                    print(temp_date, today_date)
+                    if temp_date < today_date:
+                        temp_date = today_date
                     if temp_type == 'Chest':
                         new_id = self.insert_routine(cursor, 'Back', temp_date)
                         self.find_exercise(cursor, 'Back', new_id, dispatcher, temp_date)
@@ -153,7 +200,6 @@ class ActionRoutine(Action):
                         self.find_exercise(cursor, 'Chest', new_id, dispatcher, temp_date)
                         self.find_exercise_small(cursor, 'Biceps', new_id, dispatcher)
                 else:
-                    today_date = datetime.today().strftime('%Y-%m-%d')
                     dispatcher.utter_message(f"You don't have any workout routine. I'll recommand first at {today_date}.")
                     new_id = self.insert_routine(cursor, 'Chest', today_date)
                     self.find_exercise(cursor, 'Chest', new_id, dispatcher, today_date)
@@ -230,11 +276,9 @@ class ShowRoutineAction(Action):
             dispatcher.utter_message("Please tell me your name")
             return []
         connection = pymysql.connect(**db_config)
-        seven_days_ago = datetime.now() - timedelta(days=7)
-        seven_days_ago_str = seven_days_ago.strftime('%Y-%m-%d')
         try:
             with connection.cursor() as cursor:
-                sql_routines = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY id DESC LIMIT 7"
+                sql_routines = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY `date` DESC"
                 cursor.execute(sql_routines)
                 recent_routines = cursor.fetchall()
                 if recent_routines:
@@ -271,7 +315,7 @@ class DenyRoutineAction(Action):
         try:
             with connection.cursor() as cursor:
                 # 데이터베이스에서 사용자 정보 가져오기
-                sql = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY `id` DESC LIMIT 1"
+                sql = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY `date` DESC LIMIT 1"
                 cursor.execute(sql)
                 result = cursor.fetchone()
                 if result:
@@ -297,13 +341,118 @@ class DenyRoutineAction(Action):
                         self.find_exercise(cursor, 'Legs', new_id, dispatcher, temp_date)
                         self.find_exercise_small(cursor, 'Shoulders', new_id, dispatcher)
                 else:
-                    today_date = datetime.today().strftime('%Y-%m-%d')
+                    today_date = datetime.today().date()
                     dispatcher.utter_message(f"You don't have any workout routine. I'll recommand first at {today_date}.")
                     new_id = self.insert_routine(cursor, 'Chest', today_date)
                     self.find_exercise(cursor, 'Chest', new_id, dispatcher, today_date)
                     self.find_exercise_small(cursor, 'Biceps', new_id, dispatcher)
                 connection.commit()
                 self.find_exercise_cardio(cursor, dispatcher)
+        finally:
+            connection.close()
+        return []
+    def find_exercise(self, cursor, routinetype, new_id, dispatcher, date):
+        num_exercises = random.randint(3, 4)
+        sql_exercise = f"SELECT `name` FROM `exercise` WHERE `type` = '{routinetype}' ORDER BY RAND() LIMIT {num_exercises}"
+        cursor.execute(sql_exercise)
+        result_exercise = cursor.fetchall()
+        if result_exercise:
+            exercises = [row[0] for row in result_exercise]
+            dispatcher.utter_message(f"First, I'll recommand {routinetype}'s routine at {date}")
+            for exercise_name in exercises:
+                num_sets = random.randint(3, 5)
+                if num_sets == 3:
+                    repetitions = 15
+                elif num_sets == 4:
+                    repetitions = 12
+                elif num_sets == 5:
+                    repetitions = 8
+                insert_sql = f"INSERT INTO `round` (`exercise_name`, `routine_id`, `set`, `count`) VALUES ('{exercise_name}', {new_id}, {num_sets}, {repetitions})"
+                cursor.execute(insert_sql)
+                dispatcher.utter_message(f"For {exercise_name}, perform {num_sets} sets of {repetitions} repetitions.")
+    def find_exercise_small(self, cursor, routinetype, new_id, dispatcher):
+        num_exercises = random.randint(3, 4)
+        sql_exercise = f"SELECT `name` FROM `exercise` WHERE `type` = '{routinetype}' ORDER BY RAND() LIMIT {num_exercises}"
+        cursor.execute(sql_exercise)
+        result_exercise = cursor.fetchall()
+        if result_exercise:
+            dispatcher.utter_message(f"Second, I'll recommand {routinetype}'s routine")
+            exercises = [row[0] for row in result_exercise]
+            for exercise_name in exercises:
+                num_sets = random.randint(3, 4)
+                if num_sets == 3:
+                    repetitions = 15
+                elif num_sets == 4:
+                    repetitions = 12
+                insert_sql = f"INSERT INTO `round` (`exercise_name`, `routine_id`, `set`, `count`) VALUES ('{exercise_name}', {new_id}, {num_sets}, {repetitions})"
+                cursor.execute(insert_sql)
+                dispatcher.utter_message(f"For {exercise_name}, perform {num_sets} sets of {repetitions} repetitions.")
+    def find_exercise_cardio(self, cursor, dispatcher):
+        sql_exercise = "SELECT `name` FROM `exercise` WHERE `type` = 'Cardio' ORDER BY RAND() LIMIT 1"
+        cursor.execute(sql_exercise)
+        result_exercise = cursor.fetchone()
+        if result_exercise:
+            exercise_name = result_exercise[0]
+            if bmi > 25:
+                dispatcher.utter_message(f"Since you are overweight, I recommend doing a lot of cardio. Here is My recommand cardio exercise")
+                dispatcher.utter_message(f"For cardio, I recommend {exercise_name}. It's a great way to improve cardiovascular health. I suggest doing it for 30 minutes.")
+            elif bmi > 18.5:
+                dispatcher.utter_message("Your BMI is normal. Here is a cardio exercise recommendation:")
+                dispatcher.utter_message(f"For cardio, I recommend {exercise_name}. It's a great way to improve cardiovascular health. I suggest doing it for 20 minutes.")
+            else:
+                dispatcher.utter_message("Your BMI is below normal. Adding cardio to your routine can be beneficial. Here is a cardio exercise recommendation:")
+                dispatcher.utter_message(f"For cardio, I recommend {exercise_name}. It's a great way to improve cardiovascular health. I suggest doing it for 15 minutes.")
+    def insert_routine(self, cursor, type, date):
+        insert_sql = f"INSERT INTO `routine` (`routinetype`,`User_name`, `date`) VALUES ('{type}', '{name}', '{date}')"
+        cursor.execute(insert_sql)
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        return cursor.fetchone()[0]
+
+class UpdateRoutineAction(Action):
+    def name(self):
+        return 'action_update_routine'
+    def run(self, dispatcher, tracker, domain):
+        global name, bmi
+        date = next(tracker.get_latest_entity_values("date"), None)
+        if name is None:
+            dispatcher.utter_message("Please tell me your name")
+            return []
+        if date is None:
+            dispatcher.utter_message("Try again.")
+            return []
+        connection = pymysql.connect(**db_config)
+        try:
+            with connection.cursor() as cursor:
+                # 데이터베이스에서 사용자 정보 가져오기
+                sql = f"SELECT * FROM `routine` WHERE `User_name` = '{name}'and `date` = '{date}'"
+                cursor.execute(sql)
+                result = cursor.fetchone()
+                if result:
+                    type_index = [i[0] for i in cursor.description].index('routinetype')
+                    id_index = [i[0] for i in cursor.description].index('id')
+                    date_index = [i[0] for i in cursor.description].index('date')
+                    temp_type = result[type_index]
+                    temp_id = result[id_index]
+                    temp_date = result[date_index]
+                    sql_delete_routine = f"DELETE FROM routine WHERE id = {temp_id}"
+                    cursor.execute(sql_delete_routine)
+                    dispatcher.utter_message(f"Okay, I'll update {temp_type} routine at {temp_date}")
+                    if temp_type == 'Chest':
+                        new_id = self.insert_routine(cursor, 'Chest', temp_date)
+                        self.find_exercise(cursor, 'Chest', new_id, dispatcher, temp_date)
+                        self.find_exercise_small(cursor, 'Biceps', new_id, dispatcher)
+                    elif temp_type == 'Back':
+                        new_id = self.insert_routine(cursor, 'Back', temp_date)
+                        self.find_exercise(cursor, 'Back', new_id, dispatcher, temp_date)
+                        self.find_exercise_small(cursor, 'Triceps', new_id, dispatcher)
+                    elif temp_type == 'Legs':
+                        new_id = self.insert_routine(cursor, 'Legs', temp_date)
+                        self.find_exercise(cursor, 'Legs', new_id, dispatcher, temp_date)
+                        self.find_exercise_small(cursor, 'Shoulders', new_id, dispatcher)
+                    self.find_exercise_cardio(cursor, dispatcher)
+                else:
+                    dispatcher.utter_message(f"You don't have any workout routine at {date}.")
+                connection.commit()
         finally:
             connection.close()
         return []
@@ -394,7 +543,6 @@ class CalAction(Action):
                 if result_meal:
                     kcal_index = [i[0] for i in cursor.description].index('kcal')
                     id_index = [i[0] for i in cursor.description].index('id')
-                    print(kcal)
                     kcal += result_meal[kcal_index]
                     id = result_meal[id_index]
                     dispatcher.utter_message(f"You ate {kcal}kcal today.")
@@ -406,7 +554,11 @@ class CalAction(Action):
                 connection.commit()
                 tot_kcal = self.calc_kcal(kcal, bmi, weight)
                 carb, protein, fat = self.calc_nut(tot_kcal)
-                dispatcher.utter_message(f"You must eat {tot_kcal} with {carb}g carbohydrate, {protein}g protein, {fat}g fat.")
+                meet = ['fork', 'beef', 'chicken']
+                num_sets = random.randint(0,2)
+                dispatcher.utter_message(f"You must eat {tot_kcal}kcal with {carb}g carbohydrate, {protein}g protein, {fat}g fat.")
+                rice, chicken, amond = self.exchange(carb, protein, fat)
+                dispatcher.utter_message(f"Ex) rice: {rice}g, {meet[num_sets]}: {chicken}g, amond: {amond}g.")
         finally:
             connection.close()
         return []
@@ -421,12 +573,24 @@ class CalAction(Action):
         return tot_kcal
     def calc_nut(self, kcal):
         carb_ratio = decimal.Decimal('0.5')
-        protein_ratio = decimal.Decimal('0.2')
+        protein_ratio = decimal.Decimal('0.25')
         fat_ratio = decimal.Decimal('0.2')
         carb = (kcal * carb_ratio / 4).quantize(decimal.Decimal('0.00'))
         protein = (kcal * protein_ratio / 4).quantize(decimal.Decimal('0.00'))
         fat = (kcal * fat_ratio / 9).quantize(decimal.Decimal('0.00'))
         return carb, protein, fat
+    def exchange(self, carb, protein, fat):
+        chicken = decimal.Decimal('23')
+        rice_carb = decimal.Decimal('75')
+        rice_pro = decimal.Decimal('6')
+        amond_pro = decimal.Decimal('6')
+        amond_fat = decimal.Decimal('15')
+        rice_cnt = (carb / rice_carb).quantize(decimal.Decimal('0.00'))
+        protein -= rice_cnt * rice_pro
+        amond_cnt = (fat / amond_fat).quantize(decimal.Decimal('0.00'))
+        protein -= amond_cnt * amond_pro
+        chicken_cnt = (protein / chicken).quantize(decimal.Decimal('0.00'))
+        return rice_cnt * 210, chicken_cnt * 100, amond_cnt * 30
 
 class showCalAction(Action):
     def name(self):
@@ -441,18 +605,79 @@ class showCalAction(Action):
         try:
             with connection.cursor() as cursor:
                 today_date = datetime.today().strftime('%Y-%m-%d')
-                sql_meal = f"SELECT * FROM `Meal` WHERE `User_name` = '{name}' ORDER BY `id` DESC LIMIT 7"
+                sql_meal = f"SELECT * FROM `Meal` WHERE `User_name` = '{name}' ORDER BY `date` DESC"
                 cursor.execute(sql_meal)
-                result_meal = cursor.fetchone()
-                if result_meal:
-                    dispatcher.utter_message("Okay. Let me show calorie intake you did.")
-                    kcal_index = [i[0] for i in cursor.description].index('kcal')
-                    date_index = [i[0] for i in cursor.description].index('date')
-                    kcal = result_meal[kcal_index]
-                    date = result_meal[date_index]
-                    dispatcher.utter_message(f"You ate {kcal}kcal at {date}.")
+                result_meals = cursor.fetchall()
+                if result_meals:
+                    for result_meal in result_meals:
+                        kcal_index = [i[0] for i in cursor.description].index('kcal')
+                        date_index = [i[0] for i in cursor.description].index('date')
+                        kcal = result_meal[kcal_index]
+                        date = result_meal[date_index]
+                        dispatcher.utter_message(f"You ate {kcal}kcal at {date}.")
                 else:
                     dispatcher.utter_message("You don't have any calorie intake")
         finally:
             connection.close()
         return []
+class ShowInfoAction(Action):
+    def name(self):
+        return 'action_show_user_info'
+    def run(self, dispatcher, tracker, domain):
+        global name, height, weight, bmi
+        if name is None:
+            dispatcher.utter_message("Please tell me your name")
+            return []
+        dispatcher.utter_message(f"Height: {height}cm")
+        dispatcher.utter_message(f"Weight: {weight}kg")
+        dispatcher.utter_message(f"BMI: {bmi}")
+        connection = pymysql.connect(**db_config)
+        try:
+            with connection.cursor() as cursor:
+                sql_routines = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY `date` DESC"
+                cursor.execute(sql_routines)
+                recent_routines = cursor.fetchall()
+                dispatcher.utter_message("================Workout routines================")
+                if recent_routines:
+                    for routine in recent_routines:
+                        routine_id = routine[0]
+                        routinetype = routine[1]
+                        date = routine[2]
+                        dispatcher.utter_message(f"Type: {routinetype}, Date: {date}")
+                        sql_rounds = f"SELECT * FROM `round` WHERE `routine_id` = {routine_id}"
+                        cursor.execute(sql_rounds)
+                        rounds = cursor.fetchall()
+                        for round_data in rounds:
+                            exercise_name = round_data[0]
+                            num_sets = round_data[2]
+                            num_repetitions = round_data[3]
+                            dispatcher.utter_message(f"Exercise: {exercise_name}, Sets: {num_sets}, Repetitions: {num_repetitions}")
+                        dispatcher.utter_message("\n")
+                else:
+                    dispatcher.utter_message("You don't have any workout routine")
+                sql_meal = f"SELECT * FROM `Meal` WHERE `User_name` = '{name}' ORDER BY `date` DESC"
+                cursor.execute(sql_meal)
+                result_meals = cursor.fetchall()
+                dispatcher.utter_message("================Calories================")
+                if result_meals:
+                    for result_meal in result_meals:
+                        kcal_index = [i[0] for i in cursor.description].index('kcal')
+                        date_index = [i[0] for i in cursor.description].index('date')
+                        kcal = result_meal[kcal_index]
+                        date = result_meal[date_index]
+                        dispatcher.utter_message(f"You ate {kcal}kcal at {date}.")
+                else:
+                    dispatcher.utter_message("You don't have any calorie intake")
+        finally:
+            connection.close()
+            
+class ByeAction(Action):
+    def name(self):
+        return 'action_goodbye'
+    def run(self, dispatcher, tracker, domain):
+        global name, height, weight, bmi
+        if name is None:
+            dispatcher.utter_message("Good bye!!")
+            return []
+        dispatcher.utter_message(f"Good bye {name}!!")
+        name, height, weight, bmi = None, None, None, 0

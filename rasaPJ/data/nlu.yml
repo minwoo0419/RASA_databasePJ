@@ -45,18 +45,29 @@ nlu:
   - intent: height_weight
     examples: |
       - My height is [168cm](height) and weight is [50kg](weight)
-      - Update my height to [190cm](height) and weight to [100kg](weight)
       - [180.3cm](height) and [100kg](weight)
       - height [180.32cm](height) and weight [100.33kg](weight)
       - height: [170.2cm](height), weight: [50.3kg](weight)
       - [189.33cm](height), [100.33kg](weight)
-      - [180.3cm](height), [100.3kg](weight)
+      - [181.3cm](height), [100.3kg](weight)
       - [180cm](height) and [100kg](weight)
       - height is [180.3cm](height) and weight is [100.3kg](weight)
-      - height: [170.cm](height), weight: [100.3kg](weight)
+      - height: [170cm](height), weight: [100.3kg](weight)
       - height: [175cm](height), weight: [60kg](weight)
       - height: [160cm](height), weight: [40kg](weight)
-      - height: [171cm](height), weight: [57.3kg](weight)
+      - height: [178cm](height), weight: [57.3kg](weight)
+  - intent: update_height_weight
+    examples: |
+      - Update my height to [190cm](height) and weight to [100kg](weight)
+      - Update my height to [180.3cm](height) and weight to [100.3kg](weight)
+      - Update my height to [181cm](height) and weight to [93kg](weight)
+      - Update my height to [177.2cm](height) and weight to [50.3kg](weight)
+      - Update my height to [171.33cm](height) and weight to [100.33kg](weight)
+      - Update my height to [185cm](height) and weight to [65.3kg](weight)
+      - Update my height to [167.7cm](height) and weight to [77.2kg](weight)
+      - Update my height to [170.3cm](height) and weight to [100.3kg](weight)
+      - Update my height to [200cm](height) and weight to [38kg](weight)
+      - Update my height to [181cm](height) and weight to [100.3kg](weight)
   - intent: ask_routine
     examples: |
       - Recommend a workout routine
@@ -73,6 +84,12 @@ nlu:
       - Tell me the exercise routines I did
       - Tell me the workout plans I did
       - Tell me the exercise schedules I did
+      - Show me my workout routines
+      - Show me my exercise plans
+      - Show me my workout schedules
+      - Tell me my exercise routines
+      - Tell me my workout plans
+      - Tell me my exercise schedules
   - intent: ask_diet
     examples: |
       - Recommend a diet plan
@@ -85,17 +102,29 @@ nlu:
       - What's my diet schedule?
       - What's my diet plan for today?
       - What's my diet schedule for today?
-
+  - intent: update_routine
+    examples: |
+      - Update my workout routine at [2012-06-01](date)
+      - Update my workout plan at [2024-06-10](date)
+      - Update my workout schedule at [2023-10-20](date)
+      - Update my workout routine at [2012-12-01](date)
+      - Update my workout plan at [2030-01-31](date)
+      - Update my workout schedule at [2023-11-22](date)
   - intent: deny_routine
     examples: |
-      - I don't want a workout plan
-      - I don't want a workout schedule
-      - I don't want a workout routine
+      - I don't want this workout plan.
+      - I don't want this workout schedule.
+      - I don't want this workout routine.
+      - I don't want this workout plan. I want a different one.
+      - I don't want this workout schedule. try a different one.
+      - I don't want this workout routine. try a different routine.
       - Try a different workout routine
       - Try a different workout plan
       - Try again with a different workout plan
-      - Sorry, I don't want a workout routine
-      - Sorry, I don't want a workout plan
+      - Sorry, I don't want this workout routine.
+      - Sorry, I don't want this workout plan.
+      - Sorry, I don't want this workout routine. try a different one.
+      - Sorry, I don't want this workout plan. try a different routine.
 
   - intent: good
     examples: |
@@ -159,3 +188,19 @@ nlu:
       - See you
       - See you later
       - See you soon
+  - intent: ask_user_info
+    examples: |
+      - Show my all information.
+      - Show my information.
+      - Show my user information.
+      - Show my user info.
+      - Show my all info.
+      - Show my info.
+      - Show my user info.
+      - Please show my all information.
+      - Please show my information.
+      - Please show my user information.
+      - Please show my user info.
+      - Please show my all info.
+      - Please show my info.
+      - Please show my user info.

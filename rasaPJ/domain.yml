@@ -7,43 +7,46 @@ intents:
   - ask_routine
   - ask_diet
   - height_weight
+  - update_height_weight
   - deny_routine
+  - update_routine
   - input_kcal
   - good
   - goodbye
   - ask_show_routine
   - ask_show_kcal
+  - ask_user_info
 
 responses:
   utter_ask_help:
     - text: "Do you need more help?"
+    - text: "Do you need more help? If so, please tell me."
   utter_good:
     - text: "Good!"
   utter_ask_kcal:
     - text: "Did you eat something today? If so, please tell me how many calories you ate."
-  utter_goodbye:
-    - text: "Good bye!"
-  utter_ask_routine:
-    - text: "Did you ?"
 actions:
-  - action_greet
   - action_name
+  - action_greet
   - action_info
-  - check_name_height_weight
+  - action_update_height_weight
   - utter_ask_help
   - action_recommand_routine
   - action_show_routines
   - action_deny_routine
+  - action_update_routine
   - utter_good
   - utter_ask_kcal
   - action_recommand_diet
-  - utter_goodbye
+  - action_goodbye
   - action_show_kcal
+  - action_show_user_info
 entities:
   - name
   - height
   - weight
   - calorie
+  - date
 slots:
   name:
     type: text
@@ -64,6 +67,11 @@ slots:
       - type: from_text
 
   calorie:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+  date:
     type: text
     influence_conversation: false
     mappings:
