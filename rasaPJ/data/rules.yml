@@ -34,3 +34,15 @@ rules:
     steps:
       - intent: ask_user_info
       - action: action_show_user_info
+  - rule: show exercise
+    steps:
+      - intent: show_exercise
+        entities:
+          - body_part: chest
+      - action: action_show_exercise
+  - rule: ask exercise
+    steps:
+      - intent: ask_exercise
+        entities:
+          - exercise: bench press
+      - action: action_ask_exercise

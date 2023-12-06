@@ -3,3 +3,4 @@ models/
 tests/
 .rasa/
 __pycahce__
+story_graph.dot

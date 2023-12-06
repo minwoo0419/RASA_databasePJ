@@ -16,6 +16,8 @@ intents:
   - ask_show_routine
   - ask_show_kcal
   - ask_user_info
+  - show_exercise
+  - ask_exercise
 
 responses:
   utter_ask_help:
@@ -41,12 +43,16 @@ actions:
   - action_goodbye
   - action_show_kcal
   - action_show_user_info
+  - action_show_exercise
+  - action_ask_exercise
 entities:
   - name
   - height
   - weight
   - calorie
   - date
+  - body_part
+  - exercise
 slots:
   name:
     type: text
@@ -72,6 +78,16 @@ slots:
     mappings:
       - type: from_text
   date:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+  body_part:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+  exercise:
     type: text
     influence_conversation: false
     mappings:

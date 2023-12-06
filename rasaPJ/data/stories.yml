@@ -1,7 +1,7 @@
 version: "3.1"
 
 stories:
-  - story: Greet and receive User info signup and ask routine and
+  - story: Greet without name
     steps:
       - intent: greet
       - action: action_name
@@ -9,134 +9,60 @@ stories:
         entities:
           - name: minwoo
       - action: action_greet
-      - intent: height_weight
-        entities:
-          - height: 180cm
-          - weight: 70kg
-      - action: action_info
-      - intent: ask_routine
-      - action: action_recommand_routine
-      - intent: good
-      - action: utter_good
-      - action: utter_ask_help
+      - checkpoint: greet_is_login
 
-  - story: GreetName and receive User info signup and ask routine
+  - story: Greet with name
     steps:
       - intent: greet_name
         entities:
           - name: minwoo
       - action: action_greet
+      - checkpoint: question
+
+  - story: Sign_up
+    steps:
+      - checkpoint: question
       - intent: height_weight
         entities:
           - height: 180cm
           - weight: 70kg
       - action: action_info
+      - checkpoint: question
+
+  - story: Ask routine
+    steps:
+      - checkpoint: question
       - intent: ask_routine
       - action: action_recommand_routine
+      - checkpoint: after_routine
+
+  - story: Deny routine
+    steps:
+      - checkpoint: after_routine
+      - intent: deny_routine
+      - action: action_deny_routine
+      - checkpoint: question
+
+  - story: Good routine
+    steps:
+      - checkpoint: after_routine
       - intent: good
       - action: utter_good
       - action: utter_ask_help
+      - checkpoint: question
 
-  - story: Greet and receive User info signin and ask routine
+  - story: Ask diet
     steps:
-      - intent: greet
-      - action: action_name
-      - intent: name
-        entities:
-          - name: minwoo
-      - action: action_greet
-      - intent: ask_routine
-      - action: action_recommand_routine
-      - intent: good
-      - action: utter_good
-      - action: utter_ask_help
-
-  - story: GreetName and receive User info signin and ask routine
-    steps:
-      - intent: greet_name
-        entities:
-          - name: minwoo
-      - action: action_greet
-      - intent: ask_routine
-      - action: action_recommand_routine
-      - intent: good
-      - action: utter_good
-      - action: utter_ask_help
-
-  - story: Greet and receive User info signup and ask diet
-    steps:
-      - intent: greet
-      - action: action_name
-      - intent: name
-        entities:
-          - name: minwoo
-      - action: action_greet
-      - intent: height_weight
-        entities:
-          - height: 180cm
-          - weight: 70kg
-      - action: action_info
+      - checkpoint: question
       - intent: ask_diet
       - action: utter_ask_kcal
       - intent: input_kcal
         entities:
           - calorie: 1000kcal
       - action: action_recommand_diet
-      - intent: good
-      - action: utter_good
-      - action: utter_ask_help
-
-  - story: GreetName and receive User info signup and ask diet
+      - checkpoint: question
+  - story: GoodBye
     steps:
-      - intent: greet_name
-        entities:
-          - name: minwoo
-      - action: action_greet
-      - intent: height_weight
-        entities:
-          - height: 180cm
-          - weight: 70kg
-      - action: action_info
-      - intent: ask_diet
-      - action: utter_ask_kcal
-      - intent: input_kcal
-        entities:
-          - calorie: 1000kcal
-      - action: action_recommand_diet
-      - intent: good
-      - action: utter_good
-      - action: utter_ask_help
-
-  - story: Greet and receive User info signin and ask diet
-    steps:
-      - intent: greet
-      - action: action_name
-      - intent: name
-        entities:
-          - name: minwoo
-      - action: action_greet
-      - intent: ask_diet
-      - action: utter_ask_kcal
-      - intent: input_kcal
-        entities:
-          - calorie: 1000kcal
-      - action: action_recommand_diet
-      - intent: good
-      - action: utter_good
-      - action: utter_ask_help
-
-  - story: GreetName and receive User info signin and ask diet
-    steps:
-      - intent: greet_name
-        entities:
-          - name: minwoo
-      - action: action_greet
-      - intent: ask_diet
-      - action: utter_ask_kcal
-      - intent: input_kcal
-        entities:
-          - calorie: 1000kcal
-      - action: action_recommand_diet
-      - intent: good
-      - action: utter_good
-      - action: utter_ask_help
+      - checkpoint: question
+      - intent: goodbye
+      - action: action_goodbye

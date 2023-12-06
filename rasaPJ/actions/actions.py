@@ -22,7 +22,7 @@ class ActionName(Action):
         if name is None:
             dispatcher.utter_message(f"Hello! Please Tell me your name.")
         else:
-            if height is not None or weight is not None:
+            if height is not None and weight is not None:
                 dispatcher.utter_message(f"Hi {name}! Your BMI is {bmi}. What kind of help do you need?")
             else:
                 dispatcher.utter_message(f"Hello {name}! You are a new member of this service! Can you tell me your height, and weight?")
@@ -88,7 +88,6 @@ class ActionInfo(Action):
             return []
         t_height = next(tracker.get_latest_entity_values("height"), None)
         t_weight = next(tracker.get_latest_entity_values("weight"), None)
-        print(t_height, t_weight)
         if t_height is None or t_weight is None:
             dispatcher.utter_message("Try again.")
             return []
@@ -139,7 +138,6 @@ class ActionUpdateInfo(Action):
             return []
         t_height = next(tracker.get_latest_entity_values("height"), None)
         t_weight = next(tracker.get_latest_entity_values("weight"), None)
-        print(t_height, t_weight)
         if t_height is None or t_weight is None:
             dispatcher.utter_message("Try again.")
             return []
@@ -229,7 +227,7 @@ class ActionRoutine(Action):
                 cursor.execute(insert_sql)
                 dispatcher.utter_message(f"For {exercise_name}, perform {num_sets} sets of {repetitions} repetitions.")
     def find_exercise_small(self, cursor, routinetype, new_id, dispatcher):
-        num_exercises = random.randint(3, 4)
+        num_exercises = random.randint(2, 3)
         sql_exercise = f"SELECT `name` FROM `exercise` WHERE `type` = '{routinetype}' ORDER BY RAND() LIMIT {num_exercises}"
         cursor.execute(sql_exercise)
         result_exercise = cursor.fetchall()
@@ -271,7 +269,6 @@ class ShowRoutineAction(Action):
         return 'action_show_routines'
     def run(self, dispatcher, tracker, domain):
         global name
-        print(name)
         if name is None:
             dispatcher.utter_message("Please tell me your name")
             return []
@@ -371,7 +368,7 @@ class DenyRoutineAction(Action):
                 cursor.execute(insert_sql)
                 dispatcher.utter_message(f"For {exercise_name}, perform {num_sets} sets of {repetitions} repetitions.")
     def find_exercise_small(self, cursor, routinetype, new_id, dispatcher):
-        num_exercises = random.randint(3, 4)
+        num_exercises = random.randint(2, 3)
         sql_exercise = f"SELECT `name` FROM `exercise` WHERE `type` = '{routinetype}' ORDER BY RAND() LIMIT {num_exercises}"
         cursor.execute(sql_exercise)
         result_exercise = cursor.fetchall()
@@ -681,3 +678,46 @@ class ByeAction(Action):
             return []
         dispatcher.utter_message(f"Good bye {name}!!")
         name, height, weight, bmi = None, None, None, 0
+
+class ShowExerciseAction(Action):
+    def name(self):
+        return 'action_show_exercise'
+    def run(self, dispatcher, tracker, domain):
+        body_part = next(tracker.get_latest_entity_values("body_part"), None)
+        dispatcher.utter_message(f"Okay. Let me show you {body_part}'s exercises.")
+        connection = pymysql.connect(**db_config)
+        try:
+            with connection.cursor() as cursor:
+                sql_exercises = f"SELECT * FROM `exercise` WHERE `type` = '{body_part}'"
+                cursor.execute(sql_exercises)
+                recent_exercises = cursor.fetchall()
+                dispatcher.utter_message(f"================{body_part} exercises================")
+                if recent_exercises:
+                    for exercise in recent_exercises:
+                        exercise_name = exercise[0]
+                        dispatcher.utter_message(f"{exercise_name}")
+                else:
+                    dispatcher.utter_message("Try again.")
+        finally:
+            connection.close()
+
+class AskExerciseAction(Action):
+    def name(self):
+        return 'action_ask_exercise'
+    def run(self, dispatcher, tracker, domain):
+        exercise = next(tracker.get_latest_entity_values("exercise"), None)
+        connection = pymysql.connect(**db_config)
+        try:
+            with connection.cursor() as cursor:
+                sql_exercises = f"SELECT * FROM `exercise` WHERE `name` = '{exercise}'"
+                cursor.execute(sql_exercises)
+                recent_exercise = cursor.fetchone()
+                if recent_exercise:
+                    exercise_type = recent_exercise[1]
+                    dispatcher.utter_message(f"{exercise} is a kind of {exercise_type}'s exercise.")
+                    dispatcher.utter_message(f"If you want to learn about {exercise}, go to www.exercise.com/{exercise}/{exercise_type}")
+                        
+                else:
+                    dispatcher.utter_message("Try again.")
+        finally:
+            connection.close()

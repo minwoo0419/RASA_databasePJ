@@ -45,13 +45,22 @@ nlu:
   - intent: height_weight
     examples: |
       - My height is [168cm](height) and weight is [50kg](weight)
-      - [180.3cm](height) and [100kg](weight)
-      - height [180.32cm](height) and weight [100.33kg](weight)
-      - height: [170.2cm](height), weight: [50.3kg](weight)
+      - My height is [180.3cm](height) and weight is [78kg](weight)
+      - My height is [184.32cm](height) and weight is [69.3kg](weight)
+      - My height is [177cm](height) and weight is [52kg](weight)
+      - [180.3cm](height) and [71kg](weight)
+      - [170.2cm](height) and [50.3kg](weight)
+      - [189.33cm](height) and [110.33kg](weight)
+      - height [180.32cm](height) and weight [106.33kg](weight)
+      - height: [170.2cm](height), weight: [52.3kg](weight)
+      - height: [175.3cm](height), weight: [93.3kg](weight)
       - [189.33cm](height), [100.33kg](weight)
       - [181.3cm](height), [100.3kg](weight)
       - [180cm](height) and [100kg](weight)
       - height is [180.3cm](height) and weight is [100.3kg](weight)
+      - height is [166cm](height) and weight is [64kg](weight)
+      - height is [170cm](height) and weight is [58kg](weight)
+      - height is [180.3cm](height) and weight is [76kg](weight)
       - height: [170cm](height), weight: [100.3kg](weight)
       - height: [175cm](height), weight: [60kg](weight)
       - height: [160cm](height), weight: [40kg](weight)
@@ -59,15 +68,19 @@ nlu:
   - intent: update_height_weight
     examples: |
       - Update my height to [190cm](height) and weight to [100kg](weight)
-      - Update my height to [180.3cm](height) and weight to [100.3kg](weight)
+      - Update my height to [184.3cm](height) and weight to [100.3kg](weight)
       - Update my height to [181cm](height) and weight to [93kg](weight)
       - Update my height to [177.2cm](height) and weight to [50.3kg](weight)
-      - Update my height to [171.33cm](height) and weight to [100.33kg](weight)
+      - Update my height to [171.33cm](height) and weight to [101.33kg](weight)
       - Update my height to [185cm](height) and weight to [65.3kg](weight)
       - Update my height to [167.7cm](height) and weight to [77.2kg](weight)
-      - Update my height to [170.3cm](height) and weight to [100.3kg](weight)
+      - Update my height to [172.3cm](height) and weight to [100.3kg](weight)
       - Update my height to [200cm](height) and weight to [38kg](weight)
-      - Update my height to [181cm](height) and weight to [100.3kg](weight)
+      - Update my height to [181cm](height) and weight to [109.3kg](weight)
+      - Update my height to [180cm](height) and weight to [57kg](weight)
+      - Update my height to [170cm](height) and weight to [52kg](weight)
+      - Update my height to [160cm](height) and weight to [43kg](weight)
+      - Update my height to [178cm](height) and weight to [58.3kg](weight)
   - intent: ask_routine
     examples: |
       - Recommend a workout routine
@@ -204,3 +217,57 @@ nlu:
       - Please show my all info.
       - Please show my info.
       - Please show my user info.
+  - intent: show_exercise
+    examples: |
+      - What are some [chest](body_part) exercises?
+      - What are some [back](body_part) exercises?
+      - What are some [shoulders](body_part) exercises?
+      - What are some [legs](body_part) exercises?
+      - What are some [biceps](body_part) exercises?
+      - What are some [triceps](body_part) exercises?
+      - Tell me exercises for [chest](body_part)
+      - Tell me exercises for [back](body_part)
+      - Tell me exercises for [shoulders](body_part)
+      - Tell me exercises for [legs](body_part)
+      - Tell me exercises for [biceps](body_part)
+      - Tell me exercises for [triceps](body_part)
+      - Show me exercises for [chest](body_part)
+      - Show me exercises for [back](body_part)
+      - Show me exercises for [shoulders](body_part)
+      - Show me exercises for [legs](body_part)
+      - Show me exercises for [biceps](body_part)
+      - Show me exercises for [triceps](body_part)
+  - intent: ask_exercise
+    examples: |
+      - What is [Bench-Press](exercise)
+      - What is [Deadlift](exercise)
+      - What is [Squat](exercise)
+      - What is [Overhead Press](exercise)
+      - What is [Barbell-Row](exercise)
+      - What is [Pull-up](exercise)
+      - What is [Dumbbell-Curl](exercise)
+      - What is [Dumbbell-Triceps-Extension](exercise)
+      - What is [Dumbbell-Lateral-Raise](exercise)
+      - What is [Dumbbell-Front-Raise](exercise)
+      - What is [Dumbbell-Shoulder-Press](exercise)
+      - What is [Dumbbell-Fly](exercise)
+      - What is [Dumbbell-Pullover](exercise)
+      - What is [T-Bar-Row](exercise)
+      - What is [Triceps-Extension](exercise)
+      - What is [Overhead-Barbell-Press](exercise)
+  - intent: deny
+    examples: |
+      - No
+      - Nope
+      - Nah
+      - Not really
+      - Not sure
+      - No way
+      - No I don't
+      - No I do not
+      - No thanks
+      - No thank you
+      - I don't think so
+      - I don't think that's right
+      - I don't think that's correct
+      - I don't think that's true
