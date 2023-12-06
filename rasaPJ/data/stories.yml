@@ -9,7 +9,7 @@ stories:
         entities:
           - name: minwoo
       - action: action_greet
-      - checkpoint: greet_is_login
+      - checkpoint: question
 
   - story: Greet with name
     steps:
