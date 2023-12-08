@@ -18,11 +18,9 @@ intents:
   - ask_user_info
   - show_exercise
   - ask_exercise
+  - deny
 
 responses:
-  utter_ask_help:
-    - text: "Do you need more help?"
-    - text: "Do you need more help? If so, please tell me."
   utter_good:
     - text: "Good! If you have any other help, please let me know."
   utter_ask_kcal:
@@ -32,7 +30,6 @@ actions:
   - action_greet
   - action_info
   - action_update_height_weight
-  - utter_ask_help
   - action_recommand_routine
   - action_show_routines
   - action_deny_routine

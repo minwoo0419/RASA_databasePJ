@@ -527,7 +527,6 @@ class CalAction(Action):
             return []
         temp_kcal = next(tracker.get_latest_entity_values("calorie"), None)
         kcal = 0
-        print(temp_kcal)
         if temp_kcal is not None:
             kcal = self.preprocess_measurement(temp_kcal)
         connection = pymysql.connect(**db_config)
@@ -588,6 +587,7 @@ class CalAction(Action):
         protein -= amond_cnt * amond_pro
         chicken_cnt = (protein / chicken).quantize(decimal.Decimal('0.00'))
         return rice_cnt * 210, chicken_cnt * 100, amond_cnt * 30
+
 
 class showCalAction(Action):
     def name(self):

@@ -9,10 +9,6 @@ rules:
     steps:
       - intent: ask_show_routine
       - action: action_show_routines
-  - rule: deny routines
-    steps:
-      - intent: deny_routine
-      - action: action_deny_routine
   - rule: show kcal
     steps:
       - intent: ask_show_kcal

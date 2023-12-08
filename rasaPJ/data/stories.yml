@@ -48,7 +48,6 @@ stories:
       - checkpoint: after_routine
       - intent: good
       - action: utter_good
-      - action: utter_ask_help
       - checkpoint: question
 
   - story: Ask diet
@@ -56,9 +55,18 @@ stories:
       - checkpoint: question
       - intent: ask_diet
       - action: utter_ask_kcal
+      - checkpoint: check_ate
+  - story: Did eat
+    steps:
+      - checkpoint: check_ate
       - intent: input_kcal
         entities:
           - calorie: 1000kcal
+      - action: action_recommand_diet
+  - story: Did not eat
+    steps:
+      - checkpoint: check_ate
+      - intent: deny
       - action: action_recommand_diet
       - checkpoint: question
   - story: GoodBye

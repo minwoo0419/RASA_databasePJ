@@ -56,12 +56,12 @@ nlu:
       - height: [175.3cm](height), weight: [93.3kg](weight)
       - [189.33cm](height), [100.33kg](weight)
       - [181.3cm](height), [100.3kg](weight)
-      - [180cm](height) and [100kg](weight)
+      - [186cm](height) and [100kg](weight)
       - height is [180.3cm](height) and weight is [100.3kg](weight)
       - height is [166cm](height) and weight is [64kg](weight)
-      - height is [170cm](height) and weight is [58kg](weight)
+      - height is [172cm](height) and weight is [58kg](weight)
       - height is [180.3cm](height) and weight is [76kg](weight)
-      - height: [170cm](height), weight: [100.3kg](weight)
+      - height: [173cm](height), weight: [100.3kg](weight)
       - height: [175cm](height), weight: [60kg](weight)
       - height: [160cm](height), weight: [40kg](weight)
       - height: [178cm](height), weight: [57.3kg](weight)
@@ -81,6 +81,9 @@ nlu:
       - Update my height to [170cm](height) and weight to [52kg](weight)
       - Update my height to [160cm](height) and weight to [43kg](weight)
       - Update my height to [178cm](height) and weight to [58.3kg](weight)
+      - Update my height to [176cm](height) and weight to [84kg](weight)
+      - Update my height to [193cm](height) and weight to [65kg](weight)
+      - Update my height to [165cm](height) and weight to [66kg](weight)
   - intent: ask_routine
     examples: |
       - Recommend a workout routine
@@ -123,6 +126,8 @@ nlu:
       - Update my workout routine at [2012-12-01](date)
       - Update my workout plan at [2030-01-31](date)
       - Update my workout schedule at [2023-11-22](date)
+      - Update my workout routine at [2023-04-30](date)
+      - Update my workout plan at [2023-08-18](date)
   - intent: deny_routine
     examples: |
       - I don't want this workout plan.
@@ -265,6 +270,7 @@ nlu:
       - No way
       - No I don't
       - No I do not
+      - No I didn't
       - No thanks
       - No thank you
       - I don't think so
