@@ -23,7 +23,7 @@ class ActionName(Action):
             dispatcher.utter_message(f"Hello! Please Tell me your name.")
         else:
             if height is not None and weight is not None:
-                dispatcher.utter_message(f"Hi {name}! Your BMI is {bmi}. What kind of help do you need?")
+                dispatcher.utter_message(f"Hi {name}! Do you want to Log in?")
             else:
                 dispatcher.utter_message(f"Hello {name}! You are a new member of this service! Can you tell me your height, and weight?")
         return []
@@ -50,7 +50,7 @@ class ActionGreet(Action):
                     if height is not None and weight is not None:
                         bmi = weight / (height / 100) ** 2
                         bmi = bmi.quantize(decimal.Decimal('0.00'))
-                        dispatcher.utter_message(f"Hi {name}! Your BMI is {bmi}. What kind of help do you need?")
+                        dispatcher.utter_message(f"Hi {name}! Do you want to Log in?")
                         return [
                             SlotSet("name", name),
                             SlotSet("height", height),
@@ -113,13 +113,28 @@ class ActionInfo(Action):
                         weight = temp_weight
                 bmi = weight / (height / 100) ** 2
                 bmi = bmi.quantize(decimal.Decimal('0.00'))
-                dispatcher.utter_message(f"Hi {name}! Your BMI is {bmi}. What kind of help do you need?")
+                dispatcher.utter_message(f"Hi {name}! Success To Sign up! Your BMI is {bmi}. What kind of help do you need?")
                 return [
                     SlotSet("height", height),
                     SlotSet("weight", weight)
                 ]
         finally:
             connection.close()
+class ActionSignIn(Action):
+    def name(self):
+        return 'action_sign_in'
+    def run(self, dispatcher, tracker, domain):
+        global name, bmi
+        dispatcher.utter_message(f"Hi {name}! Success To Sign in! Your BMI is {bmi}. What kind of help do you need?")
+        
+class ActionDenySignIn(Action):
+    def name(self):
+        return 'action_deny_sign_in'
+    def run(self, dispatcher, tracker, domain):
+        global name, height, weight, bmi
+        name, height, weight, bmi = None, None, None, 0
+        dispatcher.utter_message(f"Okay.  If you need help, please visit. Bye!")
+        
 class ActionUpdateInfo(Action):
     def name(self):
         return 'action_update_height_weight'
@@ -182,7 +197,6 @@ class ActionRoutine(Action):
                     temp_date = result[date_index]
                     dispatcher.utter_message(f"You most recently did a {temp_type} routine at {temp_date}")
                     temp_date = temp_date + timedelta(days=1)
-                    print(temp_date, today_date)
                     if temp_date < today_date:
                         temp_date = today_date
                     if temp_type == 'Chest':

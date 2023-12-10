@@ -9,7 +9,7 @@ stories:
         entities:
           - name: minwoo
       - action: action_greet
-      - checkpoint: question
+      - checkpoint: check_sign
 
   - story: Greet with name
     steps:
@@ -17,21 +17,30 @@ stories:
         entities:
           - name: minwoo
       - action: action_greet
-      - checkpoint: question
+      - checkpoint: check_sign
 
   - story: Sign_up
     steps:
-      - checkpoint: question
+      - checkpoint: check_sign
       - intent: height_weight
         entities:
           - height: 180cm
           - weight: 70kg
       - action: action_info
-      - checkpoint: question
+
+  - story: Sign_in_yes
+    steps:
+      - checkpoint: check_sign
+      - intent: affirm
+      - action: action_sign_in
+  - story: Sign_in_no
+    steps:
+      - checkpoint: check_sign
+      - intent: deny
+      - action: action_deny_sign_in
 
   - story: Ask routine
     steps:
-      - checkpoint: question
       - intent: ask_routine
       - action: action_recommand_routine
       - checkpoint: after_routine
@@ -41,18 +50,16 @@ stories:
       - checkpoint: after_routine
       - intent: deny_routine
       - action: action_deny_routine
-      - checkpoint: question
+      - checkpoint: after_routine
 
   - story: Good routine
     steps:
       - checkpoint: after_routine
       - intent: good
       - action: utter_good
-      - checkpoint: question
 
   - story: Ask diet
     steps:
-      - checkpoint: question
       - intent: ask_diet
       - action: utter_ask_kcal
       - checkpoint: check_ate
@@ -63,14 +70,9 @@ stories:
         entities:
           - calorie: 1000kcal
       - action: action_recommand_diet
+
   - story: Did not eat
     steps:
       - checkpoint: check_ate
       - intent: deny
       - action: action_recommand_diet
-      - checkpoint: question
-  - story: GoodBye
-    steps:
-      - checkpoint: question
-      - intent: goodbye
-      - action: action_goodbye

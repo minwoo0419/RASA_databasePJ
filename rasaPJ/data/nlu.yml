@@ -157,14 +157,14 @@ nlu:
       - Thanks a lot
   - intent: ask_show_kcal
     examples: |
-      - Show me a calorie intake I did
-      - Tell me the calorie intake I did
-      - Please show me a calorie intake I did
-      - Please tell me the calorie intake I did
-      - Show me a calorie intake
-      - Tell me the calorie intake
-      - Please show me a calorie intake
-      - Please tell me the calorie intake
+      - Show me my calorie intake I ate
+      - Tell me my calorie intake I ate
+      - Please show me my calorie intake I ate
+      - Please tell me my calorie intake I ate
+      - Show me my calorie intake
+      - Tell me my calorie intake
+      - Please show me my calorie intake
+      - Please tell me my calorie intake
 
   - intent: input_kcal
     examples: |
@@ -277,3 +277,17 @@ nlu:
       - I don't think that's right
       - I don't think that's correct
       - I don't think that's true
+
+  - intent: affirm
+    examples: |
+      - Yes
+      - Yes sure
+      - Yes please
+      - Yes of course
+      - Yes I do
+      - Yes I did
+      - Yes I am
+      - Yes I have
+      - Yes I did
+      - Yes I would
+      - Yes I will

@@ -19,6 +19,7 @@ intents:
   - show_exercise
   - ask_exercise
   - deny
+  - affirm
 
 responses:
   utter_good:
@@ -42,6 +43,8 @@ actions:
   - action_show_user_info
   - action_show_exercise
   - action_ask_exercise
+  - action_sign_in
+  - action_deny_sign_in
 entities:
   - name
   - height
