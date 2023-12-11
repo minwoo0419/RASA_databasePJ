@@ -278,6 +278,118 @@ class ActionRoutine(Action):
         cursor.execute("SELECT LAST_INSERT_ID()")
         return cursor.fetchone()[0]
 
+class ActionRoutine(Action):
+    def name(self):
+        return 'action_recommand_type_routine'
+    def run(self, dispatcher, tracker, domain):
+        global name, bmi
+        if name is None:
+            dispatcher.utter_message("Please tell me your name")
+            return []
+        rtype = next(tracker.get_latest_entity_values("body_part"), None)
+        connection = pymysql.connect(**db_config)
+        try:
+            with connection.cursor() as cursor:
+                # 데이터베이스에서 사용자 정보 가져오기
+                today_date = datetime.today().date()
+                sql = f"SELECT * FROM `routine` WHERE `User_name` = '{name}' ORDER BY `date` DESC LIMIT 1"
+                cursor.execute(sql)
+                result = cursor.fetchone()
+                if result:
+                    date_index= [i[0] for i in cursor.description].index('date')
+                    temp_date = result[date_index]
+                    dispatcher.utter_message(f"You have workout routine until {temp_date} I'll recommand {rtype}'s routine")
+                    temp_date = temp_date + timedelta(days=1)
+                    if temp_date < today_date:
+                        temp_date = today_date
+                    if rtype == 'Chest' or rtype == 'chest':
+                        new_id = self.insert_routine(cursor, 'Chest', temp_date)
+                        self.find_exercise(cursor, 'Chest', new_id, dispatcher, temp_date)
+                        self.find_exercise_small(cursor, 'Biceps', new_id, dispatcher)
+                    elif rtype == 'Back' or rtype == 'back':
+                        new_id = self.insert_routine(cursor, 'Back', temp_date)
+                        self.find_exercise(cursor, 'Back', new_id, dispatcher, temp_date)
+                        self.find_exercise_small(cursor, 'Triceps', new_id, dispatcher)
+                    elif rtype == 'Legs' or rtype == 'legs':
+                        new_id = self.insert_routine(cursor, 'Legs', temp_date)
+                        self.find_exercise(cursor, 'Legs', new_id, dispatcher, temp_date)
+                        self.find_exercise_small(cursor, 'Shoulders', new_id, dispatcher)
+                else:
+                    dispatcher.utter_message(f"You don't have any workout routine. I'll recommand first {rtype}'s routine.")
+                    if rtype == 'Chest' or rtype == 'chest':
+                        new_id = self.insert_routine(cursor, 'Chest', today_date)
+                        self.find_exercise(cursor, 'Chest', new_id, dispatcher, today_date)
+                        self.find_exercise_small(cursor, 'Biceps', new_id, dispatcher)
+                    elif rtype == 'Back' or rtype == 'back':
+                        new_id = self.insert_routine(cursor, 'Back', today_date)
+                        self.find_exercise(cursor, 'Back', new_id, dispatcher, today_date)
+                        self.find_exercise_small(cursor, 'Triceps', new_id, dispatcher)
+                    elif rtype == 'Legs' or rtype == 'legs':
+                        new_id = self.insert_routine(cursor, 'Legs', today_date)
+                        self.find_exercise(cursor, 'Legs', new_id, dispatcher, today_date)
+                        self.find_exercise_small(cursor, 'Shoulders', new_id, dispatcher)
+                connection.commit()
+                self.find_exercise_cardio(cursor, dispatcher)
+        finally:
+            connection.close()
+        return []
+    def find_exercise(self, cursor, routinetype, new_id, dispatcher, date):
+        num_exercises = random.randint(3, 4)
+        sql_exercise = f"SELECT `name` FROM `exercise` WHERE `type` = '{routinetype}' ORDER BY RAND() LIMIT {num_exercises}"
+        cursor.execute(sql_exercise)
+        result_exercise = cursor.fetchall()
+        if result_exercise:
+            exercises = [row[0] for row in result_exercise]
+            dispatcher.utter_message(f"First, I'll recommand {routinetype}'s routine at {date}")
+            for exercise_name in exercises:
+                num_sets = random.randint(3, 5)
+                if num_sets == 3:
+                    repetitions = 15
+                elif num_sets == 4:
+                    repetitions = 12
+                elif num_sets == 5:
+                    repetitions = 8
+                insert_sql = f"INSERT INTO `round` (`exercise_name`, `routine_id`, `set`, `count`) VALUES ('{exercise_name}', {new_id}, {num_sets}, {repetitions})"
+                cursor.execute(insert_sql)
+                dispatcher.utter_message(f"For {exercise_name}, perform {num_sets} sets of {repetitions} repetitions.")
+    def find_exercise_small(self, cursor, routinetype, new_id, dispatcher):
+        num_exercises = random.randint(2, 3)
+        sql_exercise = f"SELECT `name` FROM `exercise` WHERE `type` = '{routinetype}' ORDER BY RAND() LIMIT {num_exercises}"
+        cursor.execute(sql_exercise)
+        result_exercise = cursor.fetchall()
+        if result_exercise:
+            dispatcher.utter_message(f"Second, I'll recommand {routinetype}'s routine")
+            exercises = [row[0] for row in result_exercise]
+            for exercise_name in exercises:
+                num_sets = random.randint(3, 4)
+                if num_sets == 3:
+                    repetitions = 15
+                elif num_sets == 4:
+                    repetitions = 12
+                insert_sql = f"INSERT INTO `round` (`exercise_name`, `routine_id`, `set`, `count`) VALUES ('{exercise_name}', {new_id}, {num_sets}, {repetitions})"
+                cursor.execute(insert_sql)
+                dispatcher.utter_message(f"For {exercise_name}, perform {num_sets} sets of {repetitions} repetitions.")
+    def find_exercise_cardio(self, cursor, dispatcher):
+        sql_exercise = "SELECT `name` FROM `exercise` WHERE `type` = 'Cardio' ORDER BY RAND() LIMIT 1"
+        cursor.execute(sql_exercise)
+        result_exercise = cursor.fetchone()
+        if result_exercise:
+            exercise_name = result_exercise[0]
+            if bmi > 25:
+                dispatcher.utter_message(f"Since you are overweight, I recommend doing a lot of cardio. Here is My recommand cardio exercise")
+                dispatcher.utter_message(f"For cardio, I recommend {exercise_name}. It's a great way to improve cardiovascular health. I suggest doing it for 30 minutes.")
+            elif bmi > 18.5:
+                dispatcher.utter_message("Your BMI is normal. Here is a cardio exercise recommendation:")
+                dispatcher.utter_message(f"For cardio, I recommend {exercise_name}. It's a great way to improve cardiovascular health. I suggest doing it for 20 minutes.")
+            else:
+                dispatcher.utter_message("Your BMI is below normal. Adding cardio to your routine can be beneficial. Here is a cardio exercise recommendation:")
+                dispatcher.utter_message(f"For cardio, I recommend {exercise_name}. It's a great way to improve cardiovascular health. I suggest doing it for 15 minutes.")
+    def insert_routine(self, cursor, type, date):
+        insert_sql = f"INSERT INTO `routine` (`routinetype`,`User_name`, `date`) VALUES ('{type}', '{name}', '{date}')"
+        cursor.execute(insert_sql)
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        return cursor.fetchone()[0]
+
 class ShowRoutineAction(Action):
     def name(self):
         return 'action_show_routines'

@@ -20,12 +20,15 @@ intents:
   - ask_exercise
   - deny
   - affirm
+  - ask_type_routine
 
 responses:
   utter_good:
     - text: "Good! If you have any other help, please let me know."
   utter_ask_kcal:
     - text: "Did you eat something today? If so, please tell me how many calories you ate."
+  utter_ask_routine:
+    - text: "Is there an body part you would like recommended?"
 actions:
   - action_name
   - action_greet
@@ -45,6 +48,8 @@ actions:
   - action_ask_exercise
   - action_sign_in
   - action_deny_sign_in
+  - action_routine
+  - action_recommand_type_routine
 entities:
   - name
   - height

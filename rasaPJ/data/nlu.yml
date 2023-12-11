@@ -92,6 +92,16 @@ nlu:
       - What's my workout plan?
       - What's my workout routine?
       - What's my workout schedule?
+  - intent: ask_type_routine
+    examples: |
+      - Recommend [chest](body_part)
+      - Recommend [back](body_part)
+      - Recommend [shoulders](body_part)
+      - Recommend [legs](body_part)
+      - Please recommend about [chest](body_part)
+      - Please recommend about [back](body_part)
+      - Please recommend about [shoulders](body_part)
+      - Please recommend about [legs](body_part)
   - intent: ask_show_routine
     examples: |
       - Show me a workout routines I did

@@ -33,6 +33,7 @@ stories:
       - checkpoint: check_sign
       - intent: affirm
       - action: action_sign_in
+
   - story: Sign_in_no
     steps:
       - checkpoint: check_sign
@@ -42,6 +43,22 @@ stories:
   - story: Ask routine
     steps:
       - intent: ask_routine
+      - action: utter_ask_routine
+      - checkpoint: type_routine
+
+  - story: ask type routine
+    steps:
+      - checkpoint: type_routine
+      - intent: ask_type_routine
+        entities:
+          - body_part: chest
+      - action: action_recommand_type_routine
+      - checkpoint: after_routine
+
+  - story: not ask type routine
+    steps:
+      - checkpoint: type_routine
+      - intent: deny
       - action: action_recommand_routine
       - checkpoint: after_routine
 
